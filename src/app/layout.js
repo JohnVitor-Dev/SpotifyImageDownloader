@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 export const metadata = {
   title: "Spotify Image Downloader",
   description: "Baixar imagens do Spotify",

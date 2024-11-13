@@ -1,10 +1,23 @@
 'use client';
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./style.css";
 
 export default function Home() {
   const [spotifyImg, setSpotifyImg] = useState("./SpotifyImageDownloader.png");
+  const [spotifyName, setSpotifyName] = useState("Name");
+
+  useEffect(() => {
+    getSpotifyData();
+  }, []);
+
+  async function getSpotifyData() {
+    const response = await fetch('/api/spotifyApi');
+    const data = await response.json();
+    setSpotifyImg(data.images[0].url);
+    setSpotifyName(data.display_name);
+  }
+
 
   return (
     <main>
@@ -13,8 +26,8 @@ export default function Home() {
         <h1>Spotify Image Downloader</h1>
       </div>
       <div className="main-container">
-        <div className="preview-container" style={{ display: "none" }}>
-          <p>name</p>
+        <div className="preview-container">
+          <p>{spotifyName}</p>
           <div className="preview-img-container">
             <img className="album" src={spotifyImg} />
             <img className="disc" src="./Disc.svg" />
