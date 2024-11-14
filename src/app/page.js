@@ -7,16 +7,53 @@ export default function Home() {
   const [spotifyImg, setSpotifyImg] = useState("./SpotifyImageDownloader.png");
   const [spotifyName, setSpotifyName] = useState("Name");
   const [preview, setPreview] = useState("none");
+  const [alertMsg, setalertMsg] = useState("");
 
   const spotifyLink = useRef();
 
   async function getSpotifyData() {
-    const response = await fetch('/api/spotifyApi');
+    setalertMsg("");
+
+    const response = await fetch('/api/spotifyApi', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ spotifyLink: spotifyLink.current.value })
+    });
+
+    if (response.status !== 200) {
+      setalertMsg("Link inválido");
+      setSpotifyImg("./SpotifyImageDownloader.png");
+      setSpotifyName("none");
+      return;
+    }
+
     const data = await response.json();
-    setSpotifyImg(data.images[0].url);
-    setSpotifyName(data.display_name);
+
+    if (data.error) {
+      setalertMsg(data.error);
+      return;
+    }
+
+    if (data.images.length === 0) {
+      setalertMsg("Imagem não encontrada");
+      setSpotifyImg("./SpotifyImageDownloader.png");
+    } else if (data.images[0].url === null) {
+      setalertMsg("Imagem não encontrada");
+      setSpotifyImg("./SpotifyImageDownloader.png");
+    } else {
+      setSpotifyImg(data.images[0].url);
+    }
+
+    if (data.display_name === null) {
+      setalertMsg("Nome não encontrado");
+      setSpotifyName("none");
+    } else {
+      setSpotifyName(data.display_name);
+    }
+
     setPreview("flex");
-    console.log(spotifyLink.current.value);
   }
 
 
@@ -36,8 +73,9 @@ export default function Home() {
             <input type="text" id="playlist-link" placeholder="Cole o Spotify Link Aqui" ref={spotifyLink} />
             <button className="btn-grad" id="send-button" onClick={getSpotifyData}>Enviar</button>
           </div>
+          <p style={{ color: "#ff2e2e" }}>{alertMsg}</p>
         </div>
-        <hr style={{ display: `none` }} />
+        <hr />
         <div className="preview-container" style={{ display: `${preview}` }}>
           <p>{spotifyName}</p>
           <div className="preview-img-container">

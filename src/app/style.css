@@ -87,9 +87,9 @@ hr {
     gap: 10px;
 
     & button {
-        width: 50%;
+        width: 40%;
         min-height: 30px;
-        height: 30px;
+        height: 40px;
     }
 
     & .preview-img-container {
@@ -180,7 +180,7 @@ hr {
     border: 1px solid #0f3443;
     box-shadow: #777777 0px 0px 2px 0px;
     color: white;
-    background-image: linear-gradient(to right, #34e89e 0%, #0f3443 100%);
+    background-image: linear-gradient(to right, #0f3443 0%, #12B675 51%, #0f3443 100%);
 
     &:hover {
         background-position: right center;
@@ -207,7 +207,11 @@ hr {
     }
 }
 
-@media screen and (min-width: 1280px) {
+@media screen and (min-width: 1024px) {
+    hr {
+        display: none;
+    }
+
     .main-container {
         flex-direction: row;
         gap: 0;
@@ -235,6 +239,11 @@ hr {
         color: white;
         animation: previewView 1s linear forwards;
         transition: 1s all;
+
+        & p {
+            font-size: clamp(1.5rem, 2vw, 2rem);
+            font-weight: 100;
+        }
     }
 
 }
