@@ -32,9 +32,8 @@ main {
 hr {
     width: 96%;
     height: 1px;
-    background-color: #333333;
+    background-color: #137C75;
     border: 0;
-    margin-top: 10px;
 }
 
 .hidden {
@@ -71,10 +70,11 @@ hr {
     justify-content: center;
     align-items: center;
     background-color: #fff;
-    gap: 10px;
+    gap: 5%;
     border-radius: 10px;
     border: #0f3443 2px solid;
     box-shadow: #0f3443 0px 0px 5px 3px;
+    overflow-y: auto;
 }
 
 .preview-container {
@@ -88,14 +88,19 @@ hr {
 
     & button {
         width: 50%;
+        min-height: 30px;
         height: 30px;
     }
 
     & .preview-img-container {
         position: relative;
+        display: flex;
+        justify-content: center;
+        width: 100%;
+        height: auto;
 
         & img {
-            width: 100px;
+            width: 50%;
             height: auto;
         }
 
@@ -109,7 +114,7 @@ hr {
 
         & .disc {
             position: absolute;
-            left: 20px;
+            left: 35%;
             animation: discRotate 10s linear infinite;
             z-index: 1;
         }
@@ -131,6 +136,12 @@ hr {
         height: 50%;
         font-size: 12px;
         color: #555555;
+        margin-bottom: 8px;
+
+        & h3 {
+            font-weight: 300;
+            color: #000000
+        }
     }
 
     .send-container {
@@ -183,6 +194,47 @@ hr {
 
     100% {
         transform: rotate(360deg);
+    }
+}
+
+@keyframes previewView {
+    0% {
+        width: 0%;
+    }
+
+    100% {
+        width: 80%;
+    }
+}
+
+@media screen and (min-width: 1280px) {
+    .main-container {
+        flex-direction: row;
+        gap: 0;
+    }
+
+    .input-container {
+        height: 100%;
+        width: 100%;
+
+        & .input-msg {
+            width: 90%;
+            height: auto;
+        }
+
+        & .send-container {
+            width: 90%;
+            height: auto;
+        }
+    }
+
+    .preview-container {
+        height: 100%;
+        width: 80%;
+        background: #137C75;
+        color: white;
+        animation: previewView 1s linear forwards;
+        transition: 1s all;
     }
 
 }

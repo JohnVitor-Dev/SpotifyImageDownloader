@@ -1,23 +1,28 @@
 import axios from 'axios';
 require('dotenv').config();
 
-let tokenExpiry = null;
+let accessTokenGlobal = null;
+let tokenExpiryGlobal = null;
 
 const spotifyApi = axios.create({
     baseURL: 'https://api.spotify.com/v1'
 });
 
-export default async function getSpotify(req, res) {
-    const accessToken = process.env.ACCESS_TOKEN;
+const spotifyToken = axios.create({
+    baseURL: 'https://accounts.spotify.com'
+});
 
-    if (!accessToken) {
+export default async function getSpotify(req, res) {
+    await checkToken(accessTokenGlobal);
+
+    if (!accessTokenGlobal) {
         return res.status(500).json({ error: 'ACCESS_TOKEN não encontrado no ambiente' });
     }
 
     try {
         const spotifyJson = await spotifyApi.get("/users/xd0rkwg0yhuhmayrhfdyb8a12", {
             headers: {
-                Authorization: `Bearer ${accessToken}`
+                Authorization: `Bearer ${accessTokenGlobal}`
             }
         });
         const spotifyData = spotifyJson.data;
@@ -28,49 +33,24 @@ export default async function getSpotify(req, res) {
 }
 
 
-// async function fetchToken() {
-//     const response = await axios.post('https://accounts.spotify.com/api/token', null, {
-//         headers: {
-//             'Content-Type': 'application/x-www-form-urlencoded'
-//         },
-//         data: {
-//             grant_type: 'client_credentials',
-//             client_id: process.env.Client_ID,
-//             client_secret: process.env.Client_Secret
-//         }
-//     });
+async function fetchToken() {
+    const response = await spotifyToken.post("/api/token",
+        `grant_type=client_credentials&client_secret=${process.env.CLIENT_SECRET}&client_id=${process.env.CLIENT_ID}`,
+        {
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            }
+        });
 
-//     accessToken = response.data.access_token;
-//     tokenExpiry = Date.now() + response.data.expires_in * 1000; // Expiração em milissegundos
-// }
+    console.log(response.data);
+    accessTokenGlobal = response.data.access_token;
+    tokenExpiryGlobal = Date.now() + (response.data.expires_in * 1000);
+}
 
-// Verifica se o token é válido
-// async function checkToken() {
-//   if (!accessToken || Date.now() > tokenExpiry) {
-//     await fetchToken();
-//   }
-// }
+async function checkToken(accessToken) {
 
-// Configuração do Axios para incluir o token de autorização
+    if (!accessTokenGlobal || Date.now() >= tokenExpiryGlobal) {
+        await fetchToken();
+    }
 
-
-// Interceptor para verificar o token antes de cada requisição
-// spotifyApi.interceptors.request.use(async (config) => {
-//   await checkToken(); // Checa se o token é válido e o renova se necessário
-//   config.headers['Authorization'] = `Bearer ${accessToken}`;
-//   return config;
-// }, (error) => {
-//   return Promise.reject(error);
-// });
-
-// Função para buscar informações do artista
-// async function fetchArtistInfo(artistId) {
-//   try {
-//     const response = await spotifyApi.get(`/artists/${artistId}`);
-//     return response.data;
-//   } catch (error) {
-//     console.error('Erro ao buscar informações do artista:', error);
-//     throw error;
-//   }
-// }
-
+}
