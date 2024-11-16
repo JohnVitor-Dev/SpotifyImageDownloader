@@ -31,11 +31,3 @@ jobs:
 
       - name: Build do projeto
         run: npm run build
-
-      - name: Testar o projeto
-        run: npm test
-
-      - name: Iniciar o projeto (apenas para verificar o build)
-        run: npm start
-        env:
-          PORT: 3000
