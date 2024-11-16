@@ -5,38 +5,60 @@ let accessTokenGlobal = null;
 let tokenExpiryGlobal = null;
 
 const spotifyApi = axios.create({
-    baseURL: 'https://api.spotify.com/v1'
+    baseURL: 'https://api.spotify.com/v1',
+    headers: {
+        'Content-Type': 'application/json',
+    },
 });
 
 const spotifyToken = axios.create({
     baseURL: 'https://accounts.spotify.com'
 });
 
+spotifyApi.interceptors.request.use((config) => {
+    const token = accessTokenGlobal;
+    if (token) {
+        config.headers['Authorization'] = `Bearer ${token}`;
+    }
+    return config;
+}, (error) => {
+    return Promise.reject(error);
+});
+
 export default async function getSpotify(req, res) {
     await checkToken(accessTokenGlobal);
-    let SpotifyLink = req.body.spotifyLink;
+    let spotify_Link = req.body.spotifyLink;
 
-    if (!SpotifyLink) {
+    if (!spotify_Link) {
         return res.status(500).json({ error: 'Link do Spotify não encontrado' });
     }
 
     if (!accessTokenGlobal) {
-        return res.status(500).json({ error: 'ACCESS_TOKEN não encontrado no ambiente' });
+        return res.status(501).json({ error: 'ACCESS_TOKEN não encontrado no ambiente' });
+    }
+
+    let { ID, typeID } = await extractID(spotify_Link);
+
+    if (!ID || !typeID) {
+        return res.status(503).json({ error: 'Link do Spotify inválido' });
     }
 
     try {
-        const spotifyJson = await spotifyApi.get(`/users/${SpotifyLink}`, {
-            headers: {
-                Authorization: `Bearer ${accessTokenGlobal}`
-            }
-        });
+        const spotifyJson = await spotifyApi.get(`/${typeID}/${ID}`);
         const spotifyData = spotifyJson.data;
         res.status(200).json(spotifyData);
     } catch (error) {
-        res.status(500).json({ error: 'Id incorreto', details: error.message });
+        res.status(502).json({ error: 'ID incorreto', details: error.message });
     }
 }
 
+async function checkToken(accessToken) {
+
+    if (!accessTokenGlobal || Date.now() >= tokenExpiryGlobal) {
+        await fetchToken();
+    }
+
+}
 
 async function fetchToken() {
     try {
@@ -57,10 +79,58 @@ async function fetchToken() {
     }
 }
 
-async function checkToken(accessToken) {
 
-    if (!accessTokenGlobal || Date.now() >= tokenExpiryGlobal) {
-        await fetchToken();
+async function extractID(spotify_Link) {
+    // https://open.spotify.com/playlist/7tlO0yjIM5Qab61QCSgH5H?si=951a266879634991
+    let ID = null;
+    let typeID = null;
+
+    switch (true) {
+        case spotify_Link.includes('album'):
+            typeID = 'albums';
+            ID = spotify_Link.split('album/')[1].split('?')[0];
+            break;
+
+        case spotify_Link.includes('artist'):
+            typeID = 'artists';
+            ID = spotify_Link.split('artist/')[1].split('?')[0];
+            break;
+
+        case spotify_Link.includes('audiobook'):
+            typeID = 'audiobooks';
+            ID = spotify_Link.split('audiobook/')[1].split('?')[0];
+            break;
+
+        case spotify_Link.includes('chapter'):
+            typeID = 'chapters';
+            ID = spotify_Link.split('chapter/')[1].split('?')[0];
+            break;
+
+        case spotify_Link.includes('episode'):
+            typeID = 'episodes';
+            ID = spotify_Link.split('episode/')[1].split('?')[0];
+            break;
+
+        case spotify_Link.includes('playlist'):
+            typeID = 'playlists';
+            ID = spotify_Link.split('playlist/')[1].split('?')[0];
+            break;
+
+        case spotify_Link.includes('track'):
+            typeID = 'tracks';
+            ID = spotify_Link.split('track/')[1].split('?')[0];
+            break;
+
+        case spotify_Link.includes('user'):
+            typeID = 'users';
+            ID = spotify_Link.split('user/')[1].split('?')[0];
+            break;
+
+        default:
+            typeID = null
+            ID = null;
+            break;
     }
 
+    return { ID, typeID };
 }

@@ -22,35 +22,28 @@ export default function Home() {
       body: JSON.stringify({ spotifyLink: spotifyLink.current.value })
     });
 
+    const data = await response.json();
+
     if (response.status !== 200) {
-      setalertMsg("Link inválido");
+      setalertMsg(data.error);
       setSpotifyImg("./SpotifyImageDownloader.png");
       setSpotifyName("none");
       return;
     }
 
-    const data = await response.json();
-
-    if (data.error) {
-      setalertMsg(data.error);
-      return;
-    }
-
-    if (data.images.length === 0) {
-      setalertMsg("Imagem não encontrada");
-      setSpotifyImg("./SpotifyImageDownloader.png");
-    } else if (data.images[0].url === null) {
+    if ((!data.images?.length && !data.album?.images?.length) ||
+      (data.images?.[0]?.url === null && data.album?.images?.[0]?.url === null)) {
       setalertMsg("Imagem não encontrada");
       setSpotifyImg("./SpotifyImageDownloader.png");
     } else {
-      setSpotifyImg(data.images[0].url);
+      setSpotifyImg(data.images?.[0]?.url || data.album?.images?.[0]?.url || "./SpotifyImageDownloader.png");
     }
 
-    if (data.display_name === null) {
+    if (!data.display_name && !data.name) {
       setalertMsg("Nome não encontrado");
       setSpotifyName("none");
     } else {
-      setSpotifyName(data.display_name);
+      setSpotifyName(data.display_name || data.name || "none");
     }
 
     setPreview("flex");
@@ -77,7 +70,7 @@ export default function Home() {
         </div>
         <hr />
         <div className="preview-container" style={{ display: `${preview}` }}>
-          <p>{spotifyName}</p>
+          <div className="name"><p>{spotifyName}</p></div>
           <div className="preview-img-container">
             <img className="album" src={spotifyImg} />
             <img className="disc" src="./Disc.svg" />
