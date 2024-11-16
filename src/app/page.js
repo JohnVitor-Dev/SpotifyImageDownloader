@@ -63,7 +63,7 @@ export default function Home() {
             <p>Baixe imagens de arte do Spotify de qualquer faixa, playlist, álbum, artista e perfil em alta qualidade.</p>
           </div>
           <div className="send-container">
-            <input type="text" id="playlist-link" placeholder="Cole o Spotify Link Aqui" ref={spotifyLink} />
+            <input type="text" id="playlist-link" placeholder="Cole o Spotify Link ou o ID Aqui" ref={spotifyLink} />
             <button className="btn-grad" id="send-button" onClick={getSpotifyData}>Enviar</button>
           </div>
           <p style={{ color: "#ff2e2e" }}>{alertMsg}</p>

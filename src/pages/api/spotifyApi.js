@@ -40,7 +40,7 @@ export default async function getSpotify(req, res) {
     let { ID, typeID } = await extractID(spotify_Link);
 
     if (!ID || !typeID) {
-        return res.status(503).json({ error: 'Link do Spotify inválido' });
+        return res.status(503).json({ error: 'O ID ou Link fornecido é inválido ou não existe.' });
     }
 
     try {
@@ -81,7 +81,6 @@ async function fetchToken() {
 
 
 async function extractID(spotify_Link) {
-    // https://open.spotify.com/playlist/7tlO0yjIM5Qab61QCSgH5H?si=951a266879634991
     let ID = null;
     let typeID = null;
 
@@ -127,10 +126,39 @@ async function extractID(spotify_Link) {
             break;
 
         default:
-            typeID = null
-            ID = null;
+            ID = spotify_Link;
+            typeID = await searchType(ID);
             break;
     }
 
+    if (typeID === null) {
+        ID = null;
+    }
+
     return { ID, typeID };
+}
+
+async function searchType(ID) {
+    const types = ['tracks', 'albums', 'playlists', 'artists', 'users'];
+
+    for (let type of types) {
+        try {
+            const typeGet = await spotifyApi.get(`/${type}/${ID}`);
+
+            if (typeGet.status === 200) {
+                return type;
+            } else {
+                console.log(`ID não encontrado no tipo ${type}. Status code: ${typeGet.status}`);
+            }
+        } catch (error) {
+            if (error.response && error.response.status === 404) {
+                console.log(`ID não encontrado no tipo ${type}.`);
+            } else {
+                console.error('Erro ao acessar a API do Spotify:', error);
+            }
+            continue;
+        }
+    }
+
+    return null;
 }
