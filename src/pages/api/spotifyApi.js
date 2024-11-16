@@ -139,7 +139,7 @@ async function extractID(spotify_Link) {
 }
 
 async function searchType(ID) {
-    const types = ['tracks', 'albums', 'playlists', 'artists', 'users'];
+    const types = ['tracks', 'albums', 'playlists', 'artists', 'users', 'episodes', 'audiobooks', 'chapters'];
 
     for (let type of types) {
         try {
@@ -151,11 +151,7 @@ async function searchType(ID) {
                 console.log(`ID não encontrado no tipo ${type}. Status code: ${typeGet.status}`);
             }
         } catch (error) {
-            if (error.response && error.response.status === 404) {
-                console.log(`ID não encontrado no tipo ${type}.`);
-            } else {
-                console.error('Erro ao acessar a API do Spotify:', error);
-            }
+            console.log(`ID não encontrado no tipo ${type}.`);
             continue;
         }
     }
