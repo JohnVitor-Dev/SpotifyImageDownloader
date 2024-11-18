@@ -8,11 +8,15 @@ export default function Home() {
   const [spotifyName, setSpotifyName] = useState("Name");
   const [preview, setPreview] = useState("none");
   const [alertMsg, setalertMsg] = useState("");
+  const [downloadName, setDownloadName] = useState("SpotifyImage.png");
 
   const spotifyLink = useRef();
 
   async function getSpotifyData() {
     setalertMsg("");
+    setSpotifyImg("./SpotifyImageDownloader.png");
+    setSpotifyName("none");
+    setDownloadName("SpotifyImage.png");
 
     const response = await fetch('/api/spotifyApi', {
       method: 'POST',
@@ -28,6 +32,7 @@ export default function Home() {
       setalertMsg(data.error);
       setSpotifyImg("./SpotifyImageDownloader.png");
       setSpotifyName("none");
+      setDownloadName("SpotifyImage.png");
       return;
     }
 
@@ -35,6 +40,7 @@ export default function Home() {
       (data.images?.[0]?.url === null && data.album?.images?.[0]?.url === null)) {
       setalertMsg("Imagem não encontrada");
       setSpotifyImg("./SpotifyImageDownloader.png");
+      setDownloadName("SpotifyImage.png");
     } else {
       setSpotifyImg(data.images?.[0]?.url || data.album?.images?.[0]?.url || "./SpotifyImageDownloader.png");
     }
@@ -42,11 +48,32 @@ export default function Home() {
     if (!data.display_name && !data.name) {
       setalertMsg("Nome não encontrado");
       setSpotifyName("none");
+      setDownloadName("SpotifyImage.png");
     } else {
       setSpotifyName(data.display_name || data.name || "none");
+      setDownloadName(`${data.display_name}.jpeg` || `${data.name}.jpeg` || "SpotifyImage.png");
     }
 
     setPreview("flex");
+  }
+
+  async function downloadImage() {
+    if (spotifyImg === "./SpotifyImageDownloader.png") {
+      setalertMsg("Imagem não encontrada");
+      return;
+    }
+    try {
+      const response = await fetch(spotifyImg);
+      const blob = await response.blob();
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = downloadName;
+      link.click();
+      URL.revokeObjectURL(link.href);
+      console.log("Download");
+    } catch (error) {
+      console.error('Erro ao baixar a imagem:', error);
+    }
   }
 
 
@@ -75,7 +102,7 @@ export default function Home() {
             <img className="album" src={spotifyImg} />
             <img className="disc" src="./Disc.svg" />
           </div>
-          <button className="btn-grad">Download</button>
+          <button className="btn-grad" onClick={downloadImage}>Download</button>
         </div>
       </div>
     </main >
