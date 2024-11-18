@@ -125,6 +125,11 @@ async function extractID(spotify_Link) {
             ID = spotify_Link.split('user/')[1].split('?')[0];
             break;
 
+        case spotify_Link.includes('show'):
+            typeID = 'shows';
+            ID = spotify_Link.split('show/')[1].split('?')[0];
+            break;
+
         default:
             ID = spotify_Link;
             typeID = await searchType(ID);
@@ -139,7 +144,7 @@ async function extractID(spotify_Link) {
 }
 
 async function searchType(ID) {
-    const types = ['tracks', 'albums', 'playlists', 'artists', 'users', 'episodes', 'audiobooks', 'chapters'];
+    const types = ['tracks', 'albums', 'playlists', 'artists', 'users', 'episodes', 'audiobooks', 'chapters', 'shows'];
 
     for (let type of types) {
         try {
