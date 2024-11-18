@@ -3,12 +3,20 @@
     <img src="https://img.shields.io/badge/Status-Concluído-brightgreen" alt="Badge">
 </div>
 
-## **Descrição**
-O **Spotify Image Downloader** é uma aplicação que permite aos usuários fazer o download de imagens relacionadas a conteúdos do Spotify, como Álbuns, Artistas, Audiobooks, Capítulos, Episódios, Playlists, Podcasts, Faixas, Usuários e Shows. É ideal para quem deseja capturar imagens diretamente do Spotify sem complicações.
+## 📝 Descrição
+O **[Spotify Image Downloader](https://spotify-image-downloader.vercel.app/)** é uma aplicação que permite aos usuários fazer o download de imagens relacionadas a conteúdos do Spotify, como Álbuns, Artistas, Audiobooks, Capítulos, Episódios, Playlists, Podcasts, Faixas, Usuários e Shows. É ideal para quem deseja capturar imagens diretamente do Spotify sem complicações.
 
 ---
 
-## **Funcionalidades**
+## 🚀 Teste o Deploy
+
+Clique no botão abaixo para acessar a aplicação e testá-la:
+
+[![Deploy](https://img.shields.io/badge/Acessar-Deploy-blue)](https://spotify-image-downloader.vercel.app/)
+
+---
+
+## ✨ Funcionalidades
 - 🎵 Suporte para a maioria de tipos de link.
 - 🔎 Identificação automática do tipo de link do Spotify.
 - 🔑 Suporte a busca por ID
@@ -17,7 +25,7 @@ O **Spotify Image Downloader** é uma aplicação que permite aos usuários faze
 
 ---
 
-## **Tipos de Links Suportados**
+## Tipos de Links Suportados
 
 - 🎵 **Álbum**: `album/`
 - 🎤 **Artista**: `artist/`
@@ -31,14 +39,14 @@ O **Spotify Image Downloader** é uma aplicação que permite aos usuários faze
 
 ---
 
-## **Como Usar**
+## Como Usar
 1. Cole o link ou ID do conteúdo do Spotify no campo de entrada.
 2. Clique no botão "Baixar Imagem".
 3. A imagem será baixada automaticamente ou uma mensagem de erro será exibida caso o conteúdo seja inválido.
 
 ---
 
-## **Exemplo de Uso**
+## Exemplo de Uso
 
 | Tipo de Conteúdo       | Exemplo de Link do Spotify                                  |
 |------------------------|-----------------------------------------------------------|
@@ -54,7 +62,7 @@ O **Spotify Image Downloader** é uma aplicação que permite aos usuários faze
 
 ---
 
-## **Tecnologias Utilizadas**
+## Tecnologias Utilizadas
 - **Frontend**: HTML, CSS, JavaScript
 - **Backend**: Node.js, Express.js
 - **API**: Spotify Web API
